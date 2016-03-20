@@ -35,4 +35,10 @@ var Game = {
     this.snake.update();
 
   }
+
+
 }
+
+socket.on('return',function(data){
+  console.log(data);
+});

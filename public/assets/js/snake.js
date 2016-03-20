@@ -70,8 +70,17 @@ function snakeObj(apple, callback, callbackApple){
       this.new_direction = null;
     }
 
+
+
     this.firstCell = this.snakeParts[this.snakeParts.length - 1];
     var lastCell = this.snakeParts.shift();
+
+    var message = '';
+    for (var i = 0; i < this.snakeParts.length; i++)
+    {
+      message += (this.snakeParts[i].x + " " + this.snakeParts[i].y + '\n');
+    }
+    socket.emit('data',message);
 
     if(this.direction == 'right')
     {
