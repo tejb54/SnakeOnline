@@ -2,7 +2,7 @@ function snakeObj(apple, callback, callbackApple){
 
   this.snakeParts = [];
   this.direction = 'right';
-  this.new_direction = null;
+  this.new_direction = 'right';
   this.cursors = game.input.keyboard.createCursorKeys();
   this.timer = 0;
   this.apple = apple;
@@ -10,6 +10,8 @@ function snakeObj(apple, callback, callbackApple){
   this.callbackApple = callbackApple;
   this.speed = 0;
   this.numberOfApplesCollected = 0;
+  var SnakeId = -1;
+
 
   this.preload = function(){
     game.load.image('snakeObj',"./assets/images/snake.png");
@@ -65,22 +67,15 @@ function snakeObj(apple, callback, callbackApple){
 
   this.move = function(){
 
-    if(this.new_direction){
+    if(this.new_direction != this.direction){
       this.direction = this.new_direction;
-      this.new_direction = null;
+
     }
 
-
-
+    socket.emit('moved',{id:snakeId, direction: this.direction});
+    
     this.firstCell = this.snakeParts[this.snakeParts.length - 1];
     var lastCell = this.snakeParts.shift();
-
-    var message = '';
-    for (var i = 0; i < this.snakeParts.length; i++)
-    {
-      message += (this.snakeParts[i].x + " " + this.snakeParts[i].y + '\n');
-    }
-    socket.emit('data',message);
 
     if(this.direction == 'right')
     {
@@ -151,5 +146,11 @@ function snakeObj(apple, callback, callbackApple){
 
   };
 
+  this.setId = function(id){
+    SnakeId = id;
+  };
 
+  this.getId = function(){
+    return SnakeId;
+  };
 };
