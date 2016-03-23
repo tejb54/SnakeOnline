@@ -12,6 +12,7 @@ app.get('/', function(req, res){
 function snake(id){
   this.snakeId = id;
   this.snakeParts = [];
+  this.direction = 'right';
 };
 
 

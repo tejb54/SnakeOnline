@@ -72,4 +72,10 @@ function snakeOnlineObj()
        snakeParts[i].y = data[i].y;
     }
   };
+
+  this.kill = function(){
+    for (var i = 0; i < snakeParts.length; i++) {
+       snakeParts[i].kill();
+    }
+  };
 }

@@ -65,6 +65,15 @@ socket.on('connected',function(id){
   snakeId = id;
 });
 
+socket.on('user disconnected',function(id){
+  for (var i = 0; i < onlineSnakes.length; i++) {
+    if(id == onlineSnakes[i].getId()){
+      onlineSnakes[i].kill();
+      onlineSnakes.splice(i,1);
+    }
+  }
+});
+
 socket.on('user connected',function(id){
 
 });
