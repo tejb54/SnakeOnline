@@ -9,31 +9,55 @@ app.get('/', function(req, res){
   res.sendFile('index.html');
 });
 
-var numberOfPlayers = 0;
-var id = 0;
+function snake(id){
+  this.snakeId = id;
+  this.snakeParts = [];
+};
+
+
+
+
+var plyerCount = 0;
+var id = -1;
+var snakes = [];
 
 io.on('connection', function(socket){
   console.log('a user connected')
   setTimeout(function(){
-    socket.emit('connected', id);
-    socket.id = id;
-    id++;
 
-    numberOfPlayers++;
-    socket.broadcast.emit('user connected',socket.id);
+    snakes.push(new snake(socket.id));
+
+    socket.emit('connected', socket.id);
+
+    console.log(snakes);
+
+    socket.broadcast.emit('user connected',id);
   },1500);
 
 
   socket.on('disconnect',function(){
-    console.log('disconnect ' + socket.id);
+    snakes.forEach(function(element,index,array){
+      if(element.snakeId == socket.id){
+        snakes.splice(index,1);
+      }
+      console.log('user disconnected');
+      console.log(snakes);
+    });
     io.emit('user disconnected', socket.id);
-    numberOfPlayers--;
+
   });
 
   socket.on('moved',function(data){
-    socket.broadcast.emit('has moved',data);
+    snakes.forEach(function(element,index,array){
+      if(element.snakeId == socket.id){
+        snakes[index].snakeParts = data.snakeParts;
+      }
+    });
   });
 
+  socket.on('getSnakes',function(){
+    socket.emit('response getSnakes', snakes);
+  });
 });
 
 http.listen(8000, function(){

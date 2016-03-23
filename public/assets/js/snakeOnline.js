@@ -66,4 +66,10 @@ function snakeOnlineObj()
     firstCell = lastCell;
   };
 
+  this.update2 = function(data){
+    for (var i = 0; i < 10; i++) {
+       snakeParts[i].x = data[i].x;
+       snakeParts[i].y = data[i].y;
+    }
+  };
 }

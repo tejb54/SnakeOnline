@@ -29,7 +29,7 @@ function snakeObj(apple, callback, callbackApple){
 
     //timer used to slow the game down
     this.timer++;
-    if(this.timer >= (10 - this.speed)){
+    if(this.timer >= (15 - this.speed)){
       this.timer = 0;
 
       //move the snake
@@ -72,8 +72,17 @@ function snakeObj(apple, callback, callbackApple){
 
     }
 
-    socket.emit('moved',{id:snakeId, direction: this.direction});
-    
+    var parts = [];
+
+    for(i = 0; i < this.snakeParts.length; i++)
+    {
+      parts.push({x: this.snakeParts[i].x, y: this.snakeParts[i].y});
+    }
+
+    //send the position of this snake to the server
+    socket.emit('moved',{id:snakeId, snakeParts: parts});
+
+
     this.firstCell = this.snakeParts[this.snakeParts.length - 1];
     var lastCell = this.snakeParts.shift();
 

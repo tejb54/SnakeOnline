@@ -2,6 +2,7 @@ var scoreText, score;
 var snake;
 var snakeId = -1;
 var onlineSnakes = [];
+var started = false;
 
 var Game = {
 
@@ -9,6 +10,7 @@ var Game = {
 
   //preload
   preload: function(){
+    game.state.disableVisibilityChange = false;
     score = 0;
     scoreText = game.add.text(10,10, "Score: " + score, {font: "24px Arial",
       fill: "#00c4ff",
@@ -39,6 +41,7 @@ var Game = {
 
   //update
   update: function(){
+    started = true;
     if(snake.getId() != -1){
       snake.update();
     }
@@ -48,32 +51,42 @@ var Game = {
   }
 }
 
+setInterval(function(){
+  if(started){
+    socket.emit('getSnakes');
+  }
+
+}, 30);
+
 
 //networking
 socket.on('connected',function(id){
-  console.log('You connected with id: '+ id);
+  console.log('You connected');
   snakeId = id;
-
-
 });
 
 socket.on('user connected',function(id){
-  console.log('a new user connected with id: ' + id);
-  if(id != snakeId){
-    var tmpSnakeOnline = new snakeOnlineObj();
-    tmpSnakeOnline.create();
-    tmpSnakeOnline.setId(id);
-    onlineSnakes.push(tmpSnakeOnline);
-  }
 
 });
 
-socket.on('has moved',function(data){
-  onlineSnakes.forEach(function(element, index, array){
-    if(data.id == element.getId()){
-      element.update(data.direction);
+socket.on('response getSnakes', function(snakes){
+  var foundmatch = false;
+  for(var i = 0; i < snakes.length; i++){
+    foundmatch = false;
+    for (var j = 0; j < onlineSnakes.length; j++) {
+      if(onlineSnakes[j].getId() == snakes[i].snakeId){
+        onlineSnakes[j].update2(snakes[i].snakeParts);
+        foundmatch = true;
+      }
     }
-  });
-
-
+    if(!foundmatch)
+    {
+      if(snakeId != snakes[i].snakeId){
+        var tmpSnake = new snakeOnlineObj();
+        tmpSnake.create();
+        tmpSnake.setId(snakes[i].snakeId);
+        onlineSnakes.push(tmpSnake);
+      }
+    }
+  }
 });
