@@ -79,16 +79,16 @@ socket.on('user connected',function(id){
 });
 
 socket.on('response getSnakes', function(snakes){
-  var foundmatch = false;
+  var foundMatch = false;
   for(var i = 0; i < snakes.length; i++){
-    foundmatch = false;
+    foundMatch = false;
     for (var j = 0; j < onlineSnakes.length; j++) {
       if(onlineSnakes[j].getId() == snakes[i].snakeId){
         onlineSnakes[j].update2(snakes[i].snakeParts);
-        foundmatch = true;
+        foundMatch = true;
       }
     }
-    if(!foundmatch)
+    if(!foundMatch)
     {
       if(snakeId != snakes[i].snakeId){
         var tmpSnake = new snakeOnlineObj();
