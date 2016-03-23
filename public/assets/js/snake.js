@@ -69,8 +69,9 @@ function snakeObj(apple, callback, callbackApple){
 
     if(this.new_direction != this.direction){
       this.direction = this.new_direction;
-
     }
+
+    socket.emit('new direction', this.direction);
 
     var parts = [];
 
@@ -81,7 +82,6 @@ function snakeObj(apple, callback, callbackApple){
 
     //send the position of this snake to the server
     socket.emit('moved',{id:snakeId, snakeParts: parts});
-
 
     this.firstCell = this.snakeParts[this.snakeParts.length - 1];
     var lastCell = this.snakeParts.shift();

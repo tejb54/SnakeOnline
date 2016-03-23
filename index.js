@@ -59,6 +59,16 @@ io.on('connection', function(socket){
   socket.on('getSnakes',function(){
     socket.emit('response getSnakes', snakes);
   });
+
+  socket.on('new direction', function(newDirection){
+    snakes.forEach(function(element,index,array){
+      if(element.snakeId == socket.id){
+        snakes[index].direction = newDirection;
+        console.log(newDirection + ' from ' + socket.id);
+        io.emit('direction update',{id:socket.id,direction:newDirection});
+      }
+    });
+  });
 });
 
 http.listen(8000, function(){

@@ -56,7 +56,8 @@ setInterval(function(){
     socket.emit('getSnakes');
   }
 
-}, 30);
+
+}, 300);
 
 
 //networking
@@ -76,6 +77,16 @@ socket.on('user disconnected',function(id){
 
 socket.on('user connected',function(id){
 
+});
+
+socket.on('direction update', function(data){
+  var foundMatch = false;
+  for (var j = 0; j < onlineSnakes.length; j++) {
+    if(onlineSnakes[j].getId() == data.id){
+      onlineSnakes[j].update(data.direction);
+      foundMatch = true;
+    }
+  }
 });
 
 socket.on('response getSnakes', function(snakes){
