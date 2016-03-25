@@ -29,6 +29,7 @@ var Game = {
     this.apple2.create();
 
     snake = new snakeObj(Game.apple2,function(){
+      socket.emit('gameOver');
       game.state.start('Game_over');
     },
     function(){
@@ -37,59 +38,52 @@ var Game = {
     });
 
     snake.create(150,150);
+    socket.emit('user started');
+
   },
 
   //update
   update: function(){
-    started = true;
-    if(snake.getId() != -1){
-      snake.update();
-    }
-    else {
-      snake.setId(snakeId);
-    }
+    //started = true;
+    //if(snake.getId() != -1){
+    //  snake.update();
+    //}
+    //else {
+    //  snake.setId(snakeId);
+    // }
+    snake.checkInput();
   }
 }
 
-setInterval(function(){
-  if(started){
-    socket.emit('getSnakes');
-  }
 
+// setInterval(function(){
+//   if(started){
+//     //socket.emit('getSnakes');
+//   }
+// }, 30);
 
-}, 300);
-
-
-//networking
+//networking client
 socket.on('connected',function(id){
   console.log('You connected');
   snakeId = id;
 });
 
-socket.on('user disconnected',function(id){
-  for (var i = 0; i < onlineSnakes.length; i++) {
-    if(id == onlineSnakes[i].getId()){
-      onlineSnakes[i].kill();
-      onlineSnakes.splice(i,1);
-    }
+socket.on('update tick', function(snakes){
+  console.log('server update tick');
+
+  if(snakeId != -1){
+    snake.update();
+    started = true;
+    snake.setId(snakeId);
   }
-});
+  else {
 
-socket.on('user connected',function(id){
-
-});
-
-socket.on('direction update', function(data){
-  var foundMatch = false;
-  for (var j = 0; j < onlineSnakes.length; j++) {
-    if(onlineSnakes[j].getId() == data.id){
-      onlineSnakes[j].update(data.direction);
-      foundMatch = true;
-    }
   }
-});
 
-socket.on('response getSnakes', function(snakes){
+  if(!started){
+    return;
+  }
+
   var foundMatch = false;
   for(var i = 0; i < snakes.length; i++){
     foundMatch = false;
@@ -109,4 +103,36 @@ socket.on('response getSnakes', function(snakes){
       }
     }
   }
+
+
+
+
+});
+
+socket.on('user disconnected',function(id){
+  for (var i = 0; i < onlineSnakes.length; i++) {
+    if(id == onlineSnakes[i].getId()){
+      onlineSnakes[i].kill();
+      onlineSnakes.splice(i,1);
+    }
+  }
+});
+
+socket.on('user connected',function(id){
+
+});
+
+socket.on('direction update', function(data){
+  // var foundMatch = false;
+  // for (var j = 0; j < onlineSnakes.length; j++) {
+  //   if(onlineSnakes[j].getId() == data.id){
+  //     //onlineSnakes[j].update(data.direction);
+  //     foundMatch = true;
+  //   }
+  // }
+});
+
+//will add new snakes to onlineSnakes
+socket.on('response getSnakes', function(snakes){
+
 });

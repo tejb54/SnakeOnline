@@ -25,11 +25,11 @@ function snakeObj(apple, callback, callbackApple){
 
   this.update = function(){
     //check input
-    this.checkInput();
+    //this.checkInput();
 
     //timer used to slow the game down
     this.timer++;
-    if(this.timer >= (15 - this.speed)){
+    if(15 >= (15 - this.speed)){
       this.timer = 0;
 
       //move the snake
@@ -71,7 +71,7 @@ function snakeObj(apple, callback, callbackApple){
       this.direction = this.new_direction;
     }
 
-    socket.emit('new direction', this.direction);
+    //socket.emit('new direction', this.direction);
 
     var parts = [];
 
